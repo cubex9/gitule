@@ -19,5 +19,7 @@ export interface IFormConfiguration {
 	options?: string[];
 	defaultValuePath?: boolean;
 	defaultValueFilename?: boolean;
+	// parameter prefix like as -o $output
+	prefix?: string;
 }
 

@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const disposable = vscode.commands.registerCommand('gitule', () => {
 				// The code you place here will be executed every time your command is executed
 				// Display a message box to the user
-				vscode.window.showInformationMessage(cmd.identifier + ' from gitule! dopici ma vrtule');
+				vscode.window.showInformationMessage(cmd.identifier + ' from gitule!');
 				vscode.window.showQuickPick(tools.commandsToArray(cfg.commands), {}).then(i => {
 					RunScript.executeCommand(tools.searchCommandByIdentifier(cfg.commands, i));
 				});

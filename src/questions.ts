@@ -40,19 +40,30 @@ function currentlyOpen() : any {
 
 }
 
-export function question(command: ICommandConfiguration): { [id: string] : string } {
+export function question(command: ICommandConfiguration): Map<string,string> {
 
-    const variables: { [id: string]: string } = {};
+    const variables: Map<string,string> = new Map(); // { [id: string]: string } = {};
     const form = command.form || [];
     form.forEach(step => {
-        console.log('Displaying question', step.question);
+        console.log('Displaying question: ', step.question);
         askQuestion(step).then((value?: string) => {
-            if(value) {
-                variables[step.variable] = value;
-            }
+            variables.set(step.variable,resolveVariable(step, value));
         });
+
+        // default or empty
+        if(!variables.has(step.variable)) {
+            variables.set(step.variable, resolveVariable(step, undefined));
+        }
     });
 
     return variables;
+}
+
+function resolveVariable(command: IFormConfiguration, value?: string) : string {
+    let result = value || command.default;
+    if(result && command.prefix) {
+        result = command.prefix + result;
+    }
+    return result || '';
 }
 
