@@ -1,71 +1,186 @@
-# GiTULE README
+<h1>GiTULE for vs code</h1>
 
-This is the README for your extension "gitule". After writing up a brief description, we recommend including the following sections.
+<!-- ![version](https://vsmarketplacebadge.apphb.com/version/easterapps.script-runner.png)
+![version](https://vsmarketplacebadge.apphb.com/rating-star/easterapps.script-runner.png) -->
 
-## Features
+- [What is Script Runner](#what-is-script-runner)
+- [How to setup Script Runner](#how-to-setup-script-runner)
+- [Full Configuration Sample](#full-configuration-sample)
+- [Usage](#usage)
+  - [Use your defined Commands from Command Palette](#use-your-defined-commands-from-command-palette)
+  - [Use your defined Commands from Status Bar](#use-your-defined-commands-from-status-bar)
+  - [Use keyboard shortcut for specific defined commands](#use-keyboard-shortcut-for-specific-defined-commands)
+- [Use a different shell](#use-a-different-shell)
+- [Contributing](#contributing)
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## What is Script Runner
 
-For example if there is an image subfolder under your extension project workspace:
+Run command line scripts (with parameters) directly from #VSCode with a configured form.
+Create and customize your own commands to simplify your way of working.
 
-\!\[feature X\]\(images/feature-x.png\)
+Follow the instructions [How to setup Script Runner](#how-to-setup-script-runner) to use this extension.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## How to setup Script Runner
 
-## Requirements
+1. Use `ctrl+shift+P` or `F1` to invoke the Command Palette
+2. Type `Preferences: Open Settings (JSON)`
+3. Add/copy basic configuration to `settings.json`
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+```json
+  "script-runner.statusBar" : false,
+  "script-runner.definitions": {
+    "commands": [
 
-## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+    ],
+    "variables": {
 
-For example:
+    }
+  }
+```
 
-This extension contributes the following settings:
+4. Add command definitions to `commands`
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+Sample command definition:
 
-## Known Issues
+```json
+{
+  "identifier": "test",
+  "description": "Test Runner",
+  "command": "echo $var1 $var2",
+  "working_directory": "./",
+  "form": [
+    {
+      "variable": "$var1",
+      "question": "What is $var1?",
+      "default": "Test 1"
+    },
+    {
+      "variable": "$var2",
+      "question": "What is $var2?",
+      "options": ["Option 1", "Option 2", "Option 3"]
+    }
+  ]
+}
+```
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+5. Define variables for all command definitions in `variables`
 
-## Release Notes
+```json
+"variables": {
+  "$tmp": "./"
+}
+```
 
-Users appreciate release notes as you update your extension.
+| Name                   | Description                                                                                            | Required | Type    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ------- |
+| `identifier`           | Identifier used to do key binding. Use alphanumerical and hyphen/underscore only.                      | yes      | string  |
+| `description`          | Description of the command.                                                                            | yes      | string  |
+| `command`              | Command to execute (with variables).                                                                   | yes      | string  |
+| `working_directory`    | The working directory in which to execute the script.                                                  |          | string  |
+| `form`                 | A list of questions to ask in order to obtain values for variables.                                    |          | array   |
+| `variable`             | The variable name.                                                                                     |          | string  |
+| `question`             | The question to ask the user.                                                                          |          | string  |
+| `password`             | Input is a password. Default is false.  Suggestion: use also show_in_console: false                    |          | boolean |
+| `default`              | The default value to put in the field. Only for text inputs.                                           |          | string  |
+| `defaultValuePath`     | Overrides the default value with the current file path. Empty if no file open. password option ignored |          | boolean |
+| `defaultValueFilename` | Overrides the default value with the current filename. Empty if no file open. password option ignored  |          | boolean |
+| `options`              | List of options (string)                                                                               |          | array   |
+| `variables`            | List of variables (string)                                                                             |          | array   |
 
-### 1.0.0
+## Full Configuration Sample
 
-Initial release of ...
+```json
+"script-runner.statusBar": true,
+"script-runner.definitions": {
+    "commands": [
+      {
+        "identifier": "test",
+        "description": "Test Runner 1",
+        "command": "echo $var1 $var2",
+        "working_directory": "$tmp",
+        "form": [
+          {
+            "variable": "$var1",
+            "question": "What is $var1?",
+            "default": "Test 1"
+          },
+          {
+            "variable": "$var2",
+            "question": "What is $var2?",
+            "options": [
+              "Option 1",
+              "Option 2",
+              "Option 3"
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "test2",
+        "description": "Test Runner 2",
+        "command": "echo $var1 ",
+        "working_directory": "$tmp",
+        "form": [
+          {
+            "variable": "$var1",
+            "question": "What is $var1?",
+            "default": "Test 1"
+          }
+        ]
+      },
+      {
+        "identifier": "filepath1",
+        "description": "Filepath",
+        "command": "echo $path ",
+        "working_directory": "$tmp",
+        "form": [
+          {
+            "variable": "$path",
+            "question": "What is the path",
+            "defaultValuePath": true
+          }
+        ]
+      }
+    ],
+    "variables": {
+      "$tmp": "./"
+    }
+  }
 
-### 1.0.1
+```
 
-Fixed issue #.
+## Usage
 
-### 1.1.0
+### Use your defined Commands from Command Palette
 
-Added features X, Y, and Z.
+1. Use `ctrl+shift+P` or `F1` to invoke the Command Palette.
+2. Type `Script Runner: Run`.
+3. Your list of commands will appear, you can then select the one to execute.
+4. If your command has a form, the questions will be displayed.
+5. The command will be executed.
 
----
+### Use your defined Commands from Status Bar
 
-## Following extension guidelines
+If you enable the statusbar item, it will be placed at the right corner of the bottom status bar.
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+```json
+"script-runner.statusBar" : true,
+```
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+### Use keyboard shortcut for specific defined commands
 
-## Working with Markdown
+You can bind a keyboard shortcut to the command. Keyboard Shortcuts `script-runner.$command_identifier$`.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## Use a different shell
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+```json
+"script-runner.customShell.enabled": true,
+"script-runner.customShell.path": "/bin/sh",
+```
 
-## For more information
+## Contributing
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+File bugs, feature requests in [Github Issues](https://github.com/cubex9/gitule/issues).
 
-**Enjoy!**
+**Leave a review on [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=easterapps.script-runner).**

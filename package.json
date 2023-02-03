@@ -2,8 +2,12 @@
   "name": "gitule",
   "displayName": "GiTule the script runner",
   "description": "Run command line scripts with prity parameters.",
-  "icon": "resources/logo/icon_512.jpg",
   "version": "0.0.1",
+  "icon": "resources/logo/icon_128.jpeg",
+  "repository": {
+	"type" : "git",
+	"url" : "https://github.com/cubex9/gitule"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -129,7 +133,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+	"package": "vsce package"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",
