@@ -1,43 +1,27 @@
 import { ICommandConfiguration, IFormConfiguration } from "./configuration";
 import * as vscode from "vscode";
-import * as path from "path";
+import * as tools from "./tools";
 
 function askQuestion(form: IFormConfiguration) {
     const boxOptions : vscode.InputBoxOptions = {
         prompt: form.question,
-        ignoreFocusOut: true,
+        title: form.variable,
+        ignoreFocusOut: false
     };
 
     if (form.options) {
         return vscode.window.showQuickPick(form.options, boxOptions);
     } else {
         if (form.defaultValuePath) {
-            boxOptions.value = currentlyOpen().tabfilePath;
+            boxOptions.value = tools.currentlyOpen()?.tabFilePath;
         } else if(form.defaultValueFilename) {
-            boxOptions.value = currentlyOpen().tabfileName;
+            boxOptions.value = tools.currentlyOpen()?.tabFileName;
         } else {
             boxOptions.value = form.default;
             boxOptions.password = form.password;
         }
         return vscode.window.showInputBox(boxOptions);
     }
-}
-
-function currentlyOpen() : any {
-    try {
-        if(vscode.window.activeTextEditor) {
-            let tabfilePath = vscode.window.activeTextEditor.document.fileName;
-            return {
-                tabfilePath: tabfilePath,
-                tabfileName: path.basename(tabfilePath)
-            };
-        }
-        console.log("Error: not currentyly open editor...");
-    } catch (error) {
-    }
-
-    return undefined;
-
 }
 
 export function question(command: ICommandConfiguration): Map<string,string> {

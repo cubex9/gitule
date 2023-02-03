@@ -1,7 +1,8 @@
 {
   "name": "gitule",
-  "displayName": "gitule",
-  "description": "Some git tules",
+  "displayName": "GiTule the script runner",
+  "description": "Run command line scripts with prity parameters.",
+  "icon": "resources/logo/icon_512.jpg",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.74.0"
@@ -19,7 +20,108 @@
         "command": "gitule",
         "title": "bee happy..."
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Script Runner",
+			"properties": {
+				"script-runner.statusBar": {
+					"type": "boolean",
+					"default": false,
+					"description": "Shortcut in Bottom Status Bar"
+				},
+				"script-runner.customShell.enabled": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use a different shell, defined in script-runner.customShell.path"
+				},
+				"script-runner.customShell.path": {
+					"type": "string",
+					"default": "/bin/sh",
+					"description": "Shell to execute the command with"
+				},
+				"script-runner.definitions": {
+					"type": "object",
+					"properties": {
+						"commands": {
+							"type": "array",
+							"description": "List of commands.",
+							"items": {
+								"type": "object",
+								"properties": {
+									"identifier": {
+										"type": "string",
+										"description": "Identifier used to do key binding. Use alphanumerical and hyphen/underscore only.",
+										"required": true
+									},
+									"description": {
+										"type": "string",
+										"description": "Description of the command.",
+										"required": true
+									},
+									"command": {
+										"type": "string",
+										"description": "Command to execute (with variables).",
+										"required": true
+									},
+									"working_directory": {
+										"type": "string",
+										"description": "The working directory in which to execute the script."
+									},
+									"form": {
+										"type": "array",
+										"description": "A list of questions to ask in order to obtain values for variables.",
+										"items": {
+											"type": "object",
+											"properties": {
+												"variable": {
+													"type": "string",
+													"description": "The variable name.",
+													"required": true
+												},
+												"question": {
+													"type": "string",
+													"description": "The question to ask the user.",
+													"required": true
+												},
+												"default": {
+													"type": "string",
+													"description": "The default value to put in the field. Only for text inputs."
+												},
+												"password": {
+													"type": "boolean",
+													"description": "Field is a password",
+													"default": false
+												},
+												"options": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												},
+												"defaultValuePath": {
+													"type": "boolean",
+													"description": "The default value to put in the field. Only for text inputs.",
+													"default": false
+												},
+												"defaultValueFilename": {
+													"type": "boolean",
+													"description": "The default value to put in the field. Only for text inputs.",
+													"default": false
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"variables": {
+							"type": "object",
+							"description": "Name => value mapping of variables available to all scripts."
+						}
+					}
+				}
+			}
+		}
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

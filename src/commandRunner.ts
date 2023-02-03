@@ -1,8 +1,9 @@
-import { GITULE, VALUATOR } from './gitule';
+import { GITULE } from './gitule';
 import * as vscode from 'vscode';
 import { IConfiguration, ICommandConfiguration } from './configuration';
 import { question } from './questions';
 import { Terminal } from './terminal';
+import * as tools from './tools';
 
 export class RunScript {
 	static outputChannel? : vscode.OutputChannel;
@@ -14,25 +15,23 @@ export class RunScript {
 		return RunScript.outputChannel ??= vscode.window.createOutputChannel(GITULE);	
 	}
 
+	// TODO: create instance of change running instance of terminal by the cwd changes
 	public static executeCommand(command: ICommandConfiguration | undefined) {
 		if(!command) {
 			return;
 		}
 
 		const variables : Map<string,string> = question(command);
-		const builtCommand = RunScript.compileCommand(command.command, variables);
+		const builtCommand = tools.compileCommand(command.command, variables);
+		const cwd = tools.currentlyOpen()?.tabFilePath || './';
         const options: vscode.TerminalOptions = {
-            cwd: command.workingDirectory,
+            cwd: cwd,
         };
 
 		const terminal: vscode.Terminal = Terminal.getTerminal(options);
 		terminal.sendText(builtCommand, true);
 
 		RunScript.getOutputChannel().appendLine(`${GITULE} run: ${builtCommand}`);
-	}
-
-	private static compileCommand(template: string, values : Map<string,string>) : string {
-		return template.replace(VALUATOR, (match: string, ...args: any[]) => values.get(match) || '' );
 	}
 
 }
